@@ -1268,6 +1268,14 @@ if file "$TMPDIR/ramdisk/init" | grep "x86" | grep -q "32-bit"; then
 echo "- ${text_magisk_tmpfs_directory}: $MAGISKTMP"
 echo "- ARCH: $ARCH, 64-bit: $IS64BIT"
 
+# Change the security context of app_process from kernel to zygote for zygisk to work
+if [ -f "$TMPDIR/ramdisk/init.zygote32.rc" ]; then
+sed -i '/group /a\    seclabel u:r:zygote:s0' "$TMPDIR/ramdisk/init.zygote32.rc"
+fi
+if [ -f "$TMPDIR/ramdisk/init.zygote64_32.rc" ]; then
+sed -i '/group /a\    seclabel u:r:zygote:s0' "$TMPDIR/ramdisk/init.zygote64_32.rc"
+fi
+
 mkdir "$TMPDIR/ramdisk/magisk"
 if [ -f "$TMPDIR/ramdisk/magisk/init.rc" ]; then
 # found init.rc backup!
